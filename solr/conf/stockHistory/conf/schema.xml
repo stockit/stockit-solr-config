@@ -45,7 +45,7 @@
     that avoids logging every request
 -->
 
-<schema name="stock" version="1.5">
+<schema name="stockHistory" version="1.5">
     <!-- attribute "name" is the name of this schema and is only used for display purposes.
          version="x.y" is Solr's version number for the schema syntax and
          semantics.  It should not normally be changed by applications.
@@ -120,11 +120,17 @@
       required, it is highly recommended. A <uniqueKey> is present in almost all Solr
       installations. See the <uniqueKey> declaration below where <uniqueKey> is set to "id".
     -->
-    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="id" type="string" stored="true" required="true" multiValued="false" />
+    <field name="symbol" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="date" type="date" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="open" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="high" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="low" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="close" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="adjClose" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="volume" type="long" indexed="true" stored="true" required="true" multiValued="false" />
 
-    <field name="stockTicker" type="string" indexed="true" stored="true" required="true" multiValued="false" />
-    <field name="aliases" type="string" indexed="true" stored="true" required="true" multiValued="true" />
-    <field name="text" type="text" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="text" type="text" indexed="true" stored="true" required="true" multiValued="true" />
 
     <!--
       Some fields such as popularity and manu_exact could be modified to
@@ -178,7 +184,9 @@
           is added to the index.  It's used either to index the same field differently,
           or to add multiple fields to the same field for easier/faster searching.  -->
 
-    <copyField source="stockTicker" dest="text"/>
+    <copyField source="symbol" dest="text"/>
+    <copyField source="date" dest="text"/>
+    <copyField source="close" dest="text"/>
 
     <!-- Above, multiple source fields are copied to the [text] field.
        Another way to map multiple source fields to the same
@@ -206,6 +214,7 @@
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
     <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
     <fieldType name="text" class="solr.TextField" positionIncrementGap="100" />
-
+    <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
 
 </schema>
