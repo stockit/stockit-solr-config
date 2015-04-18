@@ -16,10 +16,10 @@
  limitations under the License.
 -->
 
-<!--
+<!--  
  This is the Solr schema file. This file should be named "schema.xml" and
  should be in the conf directory under the solr home
- (i.e. ./solr/conf/schema.xml by default)
+ (i.e. ./solr/conf/schema.xml by default) 
  or located where the classloader for the Solr webapp can find it.
 
  This example schema is the recommended starting point for users.
@@ -120,19 +120,28 @@
       required, it is highly recommended. A <uniqueKey> is present in almost all Solr
       installations. See the <uniqueKey> declaration below where <uniqueKey> is set to "id".
     -->
-    <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="id" type="string" stored="true" required="true" multiValued="false" />
+    <field name="articleId" type="string" stored="true" required="true" multiValued="false" />
+    <field name="stockHistoryId" type="string" stored="true" required="true" multiValued="false" />
 
+    <!-- Article Data -->
     <field name="title" type="string" indexed="true" stored="true" required="true" multiValued="false" />
     <field name="date" type="date" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="content" type="text_stock" indexed="true" stored="true" required="true" multiValued="false" />
 
-    <!-- <field name="content" type="text_en" indexed="true" stored="true" required="true" multiValued="false" /> -->
-    <field name="content" type="text_stock" indexed="true" stored="true" required="true" multiValued="false" termVectors="true" termPositions="true" termOffsets="true" />
-    <field name="contentTermVectors" type="text_stock" indexed="true" stored="true" required="true" multiValued="false" termVectors="true" termPositions="true" termOffsets="true" />
+    <!-- stock history data -->
+    <field name="symbol" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="date" type="date" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="open" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="high" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="low" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="close" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="adjClose" type="double" indexed="true" stored="true" required="true" multiValued="false" />
+    <field name="volume" type="long" indexed="true" stored="true" required="true" multiValued="false" />
 
     <!-- catchall field, containing all other searchable text fields (implemented
          via copyField further on in this schema  -->
     <field name="text" type="text_general" indexed="true" stored="false" multiValued="true"/>
-
     <!--
       Some fields such as popularity and manu_exact could be modified to
       leverage doc values:
@@ -179,7 +188,6 @@
           is added to the index.  It's used either to index the same field differently,
           or to add multiple fields to the same field for easier/faster searching.  -->
 
-    <copyField source="content" dest="contentTermVectors"/>
     <copyField source="content" dest="text"/>
     <copyField source="date" dest="text"/>
 
@@ -234,7 +242,7 @@
 
     <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
          is a more restricted form of the canonical representation of dateTime
-         http://www.w3.org/TR/xmlschema-2/#dateTime
+         http://www.w3.org/TR/xmlschema-2/#dateTime    
          The trailing "Z" designates UTC time and is mandatory.
          Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z
          All other components are mandatory.
@@ -249,7 +257,7 @@
                NOW/DAY+6MONTHS+3DAYS
                   ... 6 months and 3 days in the future from the start of
                       the current day
-
+                      
          Consult the TrieDateField javadocs for more information.
 
          Note: For faster range queries, consider the tdate type
@@ -258,16 +266,17 @@
 
     <!-- The "RandomSortField" is not used to store or search any
          data.  You can declare fields of this type it in your schema
-         to generate pseudo-random orderings of your docs for sorting
+         to generate pseudo-random orderings of your docs for sorting 
          or function purposes.  The ordering is generated based on the field
          name and the version of the index. As long as the index version
          remains unchanged, and the same field name is reused,
-         the ordering of the docs will be consistent.
+         the ordering of the docs will be consistent.  
          If you want different psuedo-random orderings of documents,
          for the same version of the index, use a dynamicField and
          change the field name in the request.
      -->
     <fieldType name="random" class="solr.RandomSortField" indexed="true" />
+    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
 
     <!-- A text field that only splits on whitespace for exact matching of words -->
     <fieldType name="text_ws" class="solr.TextField" positionIncrementGap="100">
@@ -386,4 +395,5 @@
             <!--<filter class="solr.PorterStemFilterFactory"/>-->
         </analyzer>
     </fieldType>
+
 </schema>
